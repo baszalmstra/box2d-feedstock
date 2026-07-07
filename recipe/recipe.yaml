@@ -1,6 +1,7 @@
 context:
   name: box2d
   version: "3.1.1"
+  build_number: 1
 
 package:
   name: ${{ name|lower }}
@@ -11,10 +12,19 @@ source:
   sha256: fb6ef914b50f4312d7d921a600eabc12318bb3c55a0b8c0b90608fa4488ef2e4
 
 build:
-  number: 0
+  number: ${{ build_number }}
+  script:
+    env:
+      BOX2D_AVX2: ${{ "ON" if microarch_level|default(1)|int >= 3 and target_platform == "linux-64" else "OFF" }}
+  variant:
+    use_keys:
+      - microarch_level
+    down_prioritize_variant: ${{ 1 if microarch_level|default(1)|int < 3 and target_platform == "linux-64" else 0 }}
 
 requirements:
   build:
+    - if: linux and x86_64
+      then: x86_64-microarch-level ==${{ microarch_level }}
     - ${{ compiler('cxx') }}
     - ${{ compiler('c') }}
     - ${{ stdlib('c') }}

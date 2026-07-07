@@ -2,6 +2,8 @@
 
 set -ex # Abort on error.
 
+BOX2D_AVX2="${BOX2D_AVX2:-OFF}"
+
 rm -rf build
 mkdir build
 cd build
@@ -14,6 +16,7 @@ cmake -GNinja \
       -DBUILD_SHARED_LIBS=ON \
       -DBOX2D_BUILD_DOCS=OFF \
       -DBOX2D_SAMPLES=OFF \
+      -DBOX2D_AVX2="${BOX2D_AVX2}" \
       -DGLFW_BUILD_WAYLAND=OFF \
       ${SRC_DIR}
 cmake --build . -j "${CPU_COUNT}"
